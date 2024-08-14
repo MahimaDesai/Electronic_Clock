@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rte>
+ <configset>
+  <config name="version" value="Erika 2"/>
+  <config name="path_out" value="{PROJECT_PATH}\out"/>
+  <config name="templateDir" value="{GEN_PATH}\..\templates\erika"/>
+  <config name="userCodeStart" value="/\* USER CODE START {TAG} \*/"/>
+  <config name="userCodeEnd" value="/\* USER CODE END {TAG} \*/"/>
+  <config name="guivers" value="0.1.2"/>
+ </configset>
+ <naming>
+  <config name="signalpoolPrefix" value="sp_"/>
+  <config name="signalpoolPostfix" value=""/>
+  <config name="taskPrefix" value="tsk_"/>
+  <config name="taskPostfix" value=""/>
+  <config name="signalclassPrefix" value="sc_"/>
+  <config name="signalclassPostfix" value=""/>
+  <config name="signalobjectPrefix" value="so_"/>
+  <config name="signalobjectPostfix" value=""/>
+  <config name="swcPrefix" value="swc_"/>
+  <config name="swcPostfix" value=""/>
+  <config name="runnablePrefix" value=""/>
+  <config name="runnablePostfix" value="_run"/>
+  <config name="eventPrefix" value="ev_"/>
+  <config name="eventPostfix" value=""/>
+  <config name="resourcePrefix" value="res_"/>
+  <config name="resourcePostfix" value=""/>
+  <config name="addrPrefix" value="ADR_"/>
+  <config name="addrStartPostfix" value="_START"/>
+  <config name="addrEndPostfix" value="_END"/>
+ </naming>
+ <signalpools>
+  <signalpool description="Global signal pool" endaddr="default" name="sp_common" shortname="common" startaddr="default"/>
+ </signalpools>
+ <tasks>
+  <task description="Task for input and output runnables" events="" mode="Cyclic" name="tsk_io" shortname="io" signalpoolsRO="sp_common" signalpoolsRW="sp_common" tickEvent="0" timertickperiod="1"/>
+  <task description="Task for handling the state machine on event update" events="ev_onData" mode="Event" name="tsk_control" shortname="control" signalpoolsRO="sp_common" signalpoolsRW="sp_common" tickEvent="ev_1min" timertickperiod="0"/>
+  <task description="Task for age increment " events="" mode="System" name="tsk_system" shortname="system" signalpoolsRO="sp_common" signalpoolsRW="sp_common" tickEvent="0" timertickperiod="1"/>
+ </tasks>
+ <signalclasses>
+  <signalclass description="Signal class for clock input" name="sc_Input" shortname="Input"/>
+  <signalclass description="Signal class for display" name="sc_Display" shortname="Display"/>
+  <signalclass description="Signal class for control logic" name="sc_Control" shortname="Control"/>
+ </signalclasses>
+ <signalobjects>
+  <signalobject description="A Signal object for update on input event" indriver="default" name="so_ButtonEvent" onDataError="0" onDataUpdate="ev_onData" outdriver="0" resource="None" shortname="ButtonEvent" signalclass="sc_Input" signalpool="sp_common"/>
+  <signalobject description="A Signal for value during state machine process" indriver="0" name="so_Control" onDataError="0" onDataUpdate="0" outdriver="0" resource="None" shortname="Control" signalclass="sc_Control" signalpool="sp_common"/>
+  <signalobject description="A Signal for display on TFT value" indriver="0" name="so_DisplayTFT" onDataError="0" onDataUpdate="0" outdriver="default" resource="None" shortname="DisplayTFT" signalclass="sc_Display" signalpool="sp_common"/>
+ </signalobjects>
+ <swcs>
+  <swc description="Software component for input" name="swc_Input" shortname="Input"/>
+  <swc description="Software component for control logic" name="swc_Control" shortname="Control"/>
+  <swc description="Software component for display" name="swc_Display" shortname="Display"/>
+ </swcs>
+ <runnables>
+  <runnable component="swc_Input" cycletime="50" description="Runnable for input to clock" events="" name="INPUT_Clock_input_run" shortname="Clock_input" signalIN="" signalOUT="so_ButtonEvent" task="tsk_io"/>
+  <runnable component="swc_Control" cycletime="0" description="Runnable for control logic" events="ev_onData" name="CONTROL_Clock_control_run" shortname="Clock_control" signalIN="so_ButtonEvent" signalOUT="so_Control" task="tsk_control"/>
+  <runnable component="swc_Display" cycletime="250" description="Runnable for TFT disply" events="" name="DISPLAY_Clock_display_run" shortname="Clock_display" signalIN="so_Control" signalOUT="so_DisplayTFT" task="tsk_io"/>
+ </runnables>
+ <events>
+  <event description="A Event" name="ev_onData" shortname="onData"/>
+  <event description="A Event" name="ev_1min" shortname="1min"/>
+ </events>
+ <resources/>
+</rte>
